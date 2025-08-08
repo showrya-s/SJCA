@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>St. John's Catechism Academy</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     body {
       font-family: 'Times New Roman', serif;
@@ -109,6 +109,9 @@
     .card:hover {
       transform: translateY(-5px);
     }
+    button {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -117,21 +120,30 @@
   <div id="mySidebar" class="sidebar">
     <span class="closebtn" onclick="closeNav()">&times;</span>
     <a href="#" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a>
-    <a href="#" onclick="showSection('assignments')"><i class="fas fa-tasks"></i> Assignments</a>
-    <a href="#" onclick="showSection('prayers')"><i class="fas fa-praying-hands"></i> Prayers</a>
-    <a href="#" onclick="showSection('quizzes')"><i class="fas fa-question-circle"></i> Quizzes</a>
-    <a href="#" onclick="showSection('altar')"><i class="fas fa-church"></i> Altar Servers</a>
-    <a href="#" onclick="showSection('notifications')"><i class="fas fa-bell"></i> Notifications</a>
+    
+    {% if role in ['teacher', 'head'] %}
+      <a href="#" onclick="showSection('assignments')"><i class="fas fa-tasks"></i> Assignments</a>
+      <a href="#" onclick="showSection('prayers')"><i class="fas fa-praying-hands"></i> Prayers</a>
+      <a href="#" onclick="showSection('quizzes')"><i class="fas fa-question-circle"></i> Quizzes</a>
+      <a href="#" onclick="showSection('notifications')"><i class="fas fa-bell"></i> Notifications</a>
+    {% else %}
+      <a href="#" onclick="showSection('assignments')"><i class="fas fa-tasks"></i> Assignments (View Only)</a>
+      <a href="#" onclick="showSection('prayers')"><i class="fas fa-praying-hands"></i> Prayers</a>
+      <a href="#" onclick="showSection('quizzes')"><i class="fas fa-question-circle"></i> Quizzes</a>
+      <a href="#" onclick="showSection('notifications')"><i class="fas fa-bell"></i> Notifications</a>
+    {% endif %}
+    
+    <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
   </div>
 
   <!-- Top Bar -->
   <div class="topbar">
     <span class="menu-icon" onclick="openNav()"><i class="fas fa-bars"></i></span>
     <div class="topbar-center">
-       <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Academy Logo" class="logo">
+       <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Academy Logo" class="logo" />
       <h1>St. John's Catechism Academy</h1>
     </div>
-    <div></div> <!-- Empty div for spacing -->
+    <div>Welcome, {{ username }} ({{ role }})</div>
   </div>
 
   <!-- Main Content Area -->
@@ -166,101 +178,122 @@
     </div>
   </div>
 
-  <script>
-    function openNav() {
-      document.getElementById("mySidebar").style.width = "250px";
-    }
-    function closeNav() {
-      document.getElementById("mySidebar").style.width = "0";
-    }
+<script>
+  function openNav() {
+    document.getElementById("mySidebar").style.width = "250px";
+  }
+  function closeNav() {
+    document.getElementById("mySidebar").style.width = "0";
+  }
 
-    function showSection(section) {
-      let main = document.getElementById("main-content");
-      closeNav();
+  function showSection(section) {
+    let main = document.getElementById("main-content");
+    closeNav();
 
-      if (section === "home") {
-        main.innerHTML = `
-          <section class="hero">
-            <h1>St. John's Catechism Academy</h1>
-            <p>Grow Spiritually</p>
-          </section>
-          <div class="container">
-            <h2 class="section-title"><i class="fas fa-bell"></i> Latest Notifications</h2>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="card p-3">
-                  <h5>Sunday Mass Change</h5>
-                  <p>Mass timing has been moved to 9:00 AM this week.</p>
-                </div>
+    if (section === "home") {
+      main.innerHTML = `
+        <section class="hero">
+          <h1>St. John's Catechism Academy</h1>
+          <p>Grow Spiritually</p>
+        </section>
+        <div class="container">
+          <h2 class="section-title"><i class="fas fa-bell"></i> Latest Notifications</h2>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card p-3">
+                <h5>Sunday Mass Change</h5>
+                <p>Mass timing has been moved to 9:00 AM this week.</p>
               </div>
-              <div class="col-md-4">
-                <div class="card p-3">
-                  <h5>Prayer of the Week</h5>
-                  <p>Learn the Apostle's Creed for next Sunday.</p>
-                </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card p-3">
+                <h5>Prayer of the Week</h5>
+                <p>Learn the Apostle's Creed for next Sunday.</p>
               </div>
-              <div class="col-md-4">
-                <div class="card p-3">
-                  <h5>Assignment</h5>
-                  <p>Complete Lesson 3: Beatitudes before next class.</p>
-                </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card p-3">
+                <h5>Assignment</h5>
+                <p>Complete Lesson 3: Beatitudes before next class.</p>
               </div>
             </div>
           </div>
-        `;
-      }
-      else if (section === "assignments") {
-        main.innerHTML = `
-          <section class="hero"><h1>Assignments</h1><p>Your current tasks</p></section>
-          <div class="container">
-            <h2 class="section-title"><i class="fas fa-tasks"></i> Assignments</h2>
-            <ul>
-              <li>Memorize the Hail Mary</li>
-              <li>Read Chapter 4: The Ten Commandments</li>
-            </ul>
-          </div>`;
-      }
-      else if (section === "prayers") {
-        main.innerHTML = `
-          <section class="hero"><h1>Prayers</h1><p>Daily spiritual guidance</p></section>
-          <div class="container">
-            <h2 class="section-title"><i class="fas fa-praying-hands"></i> Common Prayers</h2>
-            <p>Our Father, who art in heaven...</p>
-          </div>`;
-      }
-      else if (section === "quizzes") {
-        main.innerHTML = `
-          <section class="hero"><h1>Quizzes</h1><p>Test your knowledge</p></section>
-          <div class="container">
-            <h2 class="section-title"><i class="fas fa-question-circle"></i> Upcoming Quiz</h2>
-            <p>Quiz on the Beatitudes this Sunday.</p>
-          </div>`;
-      }
-      else if (section === "altar") {
-        main.innerHTML = `
-          <section class="hero"><h1>Altar Servers</h1><p>Schedule & duties</p></section>
-          <div class="container">
-            <h2 class="section-title"><i class="fas fa-church"></i> Upcoming Schedule</h2>
-            <p>Next week's altar server schedule will be posted here.</p>
-          </div>`;
-      }
-      else if (section === "notifications") {
-        main.innerHTML = `
-          <section class="hero"><h1>Latest Notifications</h1><p>Stay up to date</p></section>
-          <div class="container">
-            <h2 class="section-title"><i class="fas fa-bell"></i> Notifications</h2>
-            <ul>
-              <li>Mass timing has been moved to 9:00 AM this week.</li>
-              <li>Learn the Apostle's Creed for next Sunday.</li>
-              <li>Complete Lesson 3: Beatitudes before next class.</li>
-            </ul>
-          </div>`;
-      }
+        </div>
+      `;
+    } 
+    else if (section === "assignments") {
+      {% if role in ['teacher', 'head'] %}
+      main.innerHTML = `
+        <section class="hero"><h1>Assignments</h1><p>Your current tasks (Editable)</p></section>
+        <div class="container">
+          <h2 class="section-title"><i class="fas fa-tasks"></i> Assignments</h2>
+          <button onclick="alert('Add Assignment')">Add Assignment</button>
+          <ul>
+            <li>Memorize the Hail Mary <button onclick="alert('Edit Assignment')">Edit</button></li>
+            <li>Read Chapter 4: The Ten Commandments <button onclick="alert('Edit Assignment')">Edit</button></li>
+          </ul>
+        </div>
+      `;
+      {% else %}
+      main.innerHTML = `
+        <section class="hero"><h1>Assignments</h1><p>Your current tasks (View Only)</p></section>
+        <div class="container">
+          <h2 class="section-title"><i class="fas fa-tasks"></i> Assignments</h2>
+          <ul>
+            <li>Memorize the Hail Mary</li>
+            <li>Read Chapter 4: The Ten Commandments</li>
+          </ul>
+        </div>
+      `;
+      {% endif %}
+    } 
+    else if (section === "prayers") {
+      main.innerHTML = `
+        <section class="hero"><h1>Prayers</h1><p>Daily spiritual guidance</p></section>
+        <div class="container">
+          <h2 class="section-title"><i class="fas fa-praying-hands"></i> Common Prayers</h2>
+          <p>Our Father, who art in heaven...</p>
+        </div>
+      `;
+    } 
+    else if (section === "quizzes") {
+      main.innerHTML = `
+        <section class="hero"><h1>Quizzes</h1><p>Test your knowledge</p></section>
+        <div class="container">
+          <h2 class="section-title"><i class="fas fa-question-circle"></i> Upcoming Quiz</h2>
+          <p>Quiz on the Beatitudes this Sunday.</p>
+        </div>
+      `;
+    } 
+    else if (section === "notifications") {
+      {% if role in ['teacher', 'head'] %}
+      main.innerHTML = `
+        <section class="hero"><h1>Latest Notifications</h1><p>Manage notifications here</p></section>
+        <div class="container">
+          <h2 class="section-title"><i class="fas fa-bell"></i> Notifications</h2>
+          <button onclick="alert('Add Notification')">Add Notification</button>
+          <ul>
+            <li>Mass timing has been moved to 9:00 AM this week. <button onclick="alert('Edit Notification')">Edit</button></li>
+            <li>Learn the Apostle's Creed for next Sunday. <button onclick="alert('Edit Notification')">Edit</button></li>
+            <li>Complete Lesson 3: Beatitudes before next class. <button onclick="alert('Edit Notification')">Edit</button></li>
+          </ul>
+        </div>
+      `;
+      {% else %}
+      main.innerHTML = `
+        <section class="hero"><h1>Latest Notifications</h1><p>Stay up to date</p></section>
+        <div class="container">
+          <h2 class="section-title"><i class="fas fa-bell"></i> Notifications</h2>
+          <ul>
+            <li>Mass timing has been moved to 9:00 AM this week.</li>
+            <li>Learn the Apostle's Creed for next Sunday.</li>
+            <li>Complete Lesson 3: Beatitudes before next class.</li>
+          </ul>
+        </div>
+      `;
+      {% endif %}
     }
-  </script>
+  }
+</script>
 </body>
 </html>
-
-
-
-
